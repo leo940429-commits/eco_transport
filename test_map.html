@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>地圖測試</title>
+    <style>
+        /* 必須設定高度，不然地圖會看不到 */
+        #map {
+            height: 100%;
+        }
+        /* 讓網頁全螢幕顯示 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 地圖容器 -->
+    <div id="map"></div>
+
+    <!-- 載入 Google Maps API -->
+    <!-- 把 AIzaSyAFy0ChBy24ECuNAzspWl9-sYJ4Cp_J48g 換成你的金鑰 -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFy0ChBy24ECuNAzspWl9-sYJ4Cp_J48g&callback=initMap" async defer></script>
+    
+    <script>
+        function initMap() {
+            // 設定地圖中心點 (這裡是台北車站)
+            var taipeiMainStation = {lat: 25.0478, lng: 121.5170};
+            
+            // 建立地圖
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15, // 縮放層級 (數字越大越近)
+                center: taipeiMainStation
+            });
+
+            // 放一個紅色圖標
+            var marker = new google.maps.Marker({
+                position: taipeiMainStation,
+                map: map,
+                title: "台北車站"
+            });
+        }
+    </script>
+</body>
+</html>
