@@ -123,7 +123,7 @@
     <div id="map"></div>
 
     <!-- 請換成你的 API Key -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFy0ChBy24ECuNAzspWl9-sYJ4Cp_J48g&callback=initMap" async defer></script>
 
     <script>
         let map, directionsService, directionsRenderer;
