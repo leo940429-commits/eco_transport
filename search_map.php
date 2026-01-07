@@ -1,5 +1,5 @@
 <?php
-// [後端 PHP] 讀取 XML 係數 (保持不變)
+// [後端 PHP] 讀取 XML 係數
 $xml = simplexml_load_file("carbon_data.xml");
 $rates = [];
 foreach ($xml->item as $item) {
@@ -19,26 +19,22 @@ $json_rates = json_encode($rates);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>節能交通搜尋 (互動地圖版)</title>
+    <title>節能交通搜尋 (自動完成版)</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS 保持原本基礎，新增查看按鈕樣式 */
+        /* CSS 樣式保持不變 */
         html, body { height: 100%; margin: 0; padding: 0; font-family: 'Roboto', "微軟正黑體", sans-serif; }
         #map { height: 100%; width: 100%; }
         #left-panel { position: absolute; top: 10px; left: 10px; z-index: 5; width: 380px; max-height: 90vh; display: flex; flex-direction: column; gap: 10px; }
         #search-box { background-color: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         #directions-panel { background-color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); overflow-y: auto; display: none; padding-bottom: 10px;}
-        
-        /* 輸入框與按鈕 */
         .input-wrapper { position: relative; margin-bottom: 10px; }
         input[type="text"] { width: 100%; padding: 10px 35px 10px 10px; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; outline: none; }
         input[type="text"]:focus { border-color: #4285f4; box-shadow: 0 0 0 2px rgba(66,133,244,0.2); }
         .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #70757a; display: none; }
         #search-btn { width: 100%; padding: 10px; background-color: #1a73e8; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
         #search-btn:hover { background-color: #1557b0; }
-
-        /* 模式與排序按鈕 */
         #mode-selector { display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px; }
         .mode-btn { display: inline-block; padding: 6px 12px; margin-right: 5px; border: 1px solid #dadce0; border-radius: 20px; background: white; color: #5f6368; cursor: pointer; transition: 0.2s;}
         .mode-btn:hover { background-color: #f1f3f4; }
@@ -49,39 +45,20 @@ $json_rates = json_encode($rates);
         .sort-btn.active[data-sort="time"] { background-color: #fce8e6; color: #c5221f; border-color: #c5221f; font-weight: bold; }
         .sort-btn.active[data-sort="carbon"] { background-color: #e6f4ea; color: #137333; border-color: #137333; font-weight: bold; }
         .sort-btn.active[data-sort="price"] { background-color: #fff8e1; color: #f9ab00; border-color: #f9ab00; font-weight: bold; }
-
-        /* 總結區塊 */
         #summary-box { margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; display: none; border-left: 4px solid #1a73e8; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
         .total-carbon { color: #137333; font-weight: bold; }
         .total-price { color: #f9ab00; font-weight: bold; text-shadow: 0px 0px 1px #999; }
-
-        /* 詳細步驟與新的按鈕樣式 */
         .step-item { padding: 12px 15px; border-bottom: 1px solid #eee; display: flex; align-items: flex-start; justify-content: space-between; }
-        .step-info { display: flex; align-items: flex-start; flex: 1; } /* 左邊資訊 */
+        .step-info { display: flex; align-items: flex-start; flex: 1; }
         .step-icon { font-size: 20px; margin-right: 15px; min-width: 30px; text-align: center; }
         .step-content { font-size: 14px; color: #333; }
         .transit-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; color: white; font-size: 12px; font-weight: bold; margin-right: 5px; }
-        
-        /* [新增] 定位按鈕樣式 */
-        .focus-btn {
-            background: white;
-            border: 1px solid #dadce0;
-            color: #1a73e8;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            margin-left: 10px;
-            white-space: nowrap;
-            transition: 0.2s;
-        }
-        .focus-btn:hover {
-            background: #e8f0fe;
-            border-color: #1a73e8;
-        }
-
+        .focus-btn { background: white; border: 1px solid #dadce0; color: #1a73e8; cursor: pointer; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin-left: 10px; white-space: nowrap; transition: 0.2s; }
+        .focus-btn:hover { background: #e8f0fe; border-color: #1a73e8; }
         h3 { margin: 0 0 10px 0; font-size: 18px; }
+        /* 修正 Autocomplete 下拉選單有時候被擋住的問題 */
+        .pac-container { z-index: 10000 !important; }
     </style>
 </head>
 <body>
@@ -91,12 +68,12 @@ $json_rates = json_encode($rates);
             <h3>🌱 節能路徑規劃</h3>
             
             <div class="input-wrapper">
-                <input type="text" id="origin-input" placeholder="起點" oninput="toggleClearBtn('origin-input', 'clear-origin')">
+                <input type="text" id="origin-input" placeholder="起點 (例如: 台北車站)" oninput="toggleClearBtn('origin-input', 'clear-origin')">
                 <span id="clear-origin" class="clear-btn" onclick="clearInput('origin-input', 'clear-origin')">&times;</span>
             </div>
 
             <div class="input-wrapper">
-                <input type="text" id="dest-input" placeholder="終點" oninput="toggleClearBtn('dest-input', 'clear-dest')">
+                <input type="text" id="dest-input" placeholder="終點 (例如: 101)" oninput="toggleClearBtn('dest-input', 'clear-dest')">
                 <span id="clear-dest" class="clear-btn" onclick="clearInput('dest-input', 'clear-dest')">&times;</span>
             </div>
             
@@ -129,14 +106,13 @@ $json_rates = json_encode($rates);
 
     <div id="map"></div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFy0ChBy24ECuNAzspWl9-sYJ4Cp_J48g&callback=initMap" async defer></script>
+    <!-- [關鍵修改] 網址最後面加上了 &libraries=places -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFy0ChBy24ECuNAzspWl9-sYJ4Cp_J48g&callback=initMap&libraries=places" async defer></script>
 
     <script>
         const carbonRates = <?php echo $json_rates; ?>;
-        let map, directionsService, directionsRenderer;
-        let stepInfoWindow; // [新增] 用來顯示步驟資訊的彈出視窗
-        let currentRouteSteps = []; // [新增] 儲存當前顯示路線的所有步驟，方便按鈕讀取
-        
+        let map, directionsService, directionsRenderer, stepInfoWindow;
+        let currentRouteSteps = [];
         let currentTravelMode = 'TRANSIT';
         let currentTransitType = 'SUBWAY';
         let originalDirectionsResult = null;
@@ -148,9 +124,10 @@ $json_rates = json_encode($rates);
             });
             directionsService = new google.maps.DirectionsService();
             directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: false });
-            
-            // [新增] 初始化彈出視窗
             stepInfoWindow = new google.maps.InfoWindow();
+
+            // --- [新增] 初始化自動完成功能 ---
+            initAutocomplete();
 
             document.getElementById("search-btn").addEventListener("click", function() {
                 document.getElementById("mode-selector").style.display = "block";
@@ -162,6 +139,21 @@ $json_rates = json_encode($rates);
             google.maps.event.addListener(streetView, 'visible_changed', function() {
                 leftPanel.style.display = streetView.getVisible() ? "none" : "flex";
             });
+        }
+
+        // --- [新增] 自動完成設定函式 ---
+        function initAutocomplete() {
+            const options = {
+                componentRestrictions: { country: "tw" }, // 限制只搜尋台灣
+                fields: ["formatted_address", "geometry", "name"], // 只抓取需要的欄位 (省錢)
+            };
+
+            const originInput = document.getElementById("origin-input");
+            const destInput = document.getElementById("dest-input");
+
+            // 綁定輸入框
+            new google.maps.places.Autocomplete(originInput, options);
+            new google.maps.places.Autocomplete(destInput, options);
         }
 
         function changeMode(btn, mode, type) {
@@ -251,18 +243,14 @@ $json_rates = json_encode($rates);
             const bestRoute = calculatedRoutes[0];
             directionsRenderer.setDirections(originalDirectionsResult);
             directionsRenderer.setRouteIndex(bestRoute.originalIndex);
-
-            // 關閉之前可能打開的彈出視窗
             stepInfoWindow.close();
             
-            // 渲染列表
             const routeToShow = bestRoute.data;
             routeToShow.calculatedCarbon = bestRoute.totalCarbon;
             routeToShow.calculatedPrice = bestRoute.totalPrice;
             renderDirectionsPanel(routeToShow);
         }
 
-        // --- [修改] 渲染面板，加入「查看」按鈕 ---
         function renderDirectionsPanel(route) {
             const panel = document.getElementById("directions-panel");
             const summaryBox = document.getElementById("summary-box");
@@ -275,9 +263,7 @@ $json_rates = json_encode($rates);
             document.getElementById("sum-carbon").innerText = `${route.calculatedCarbon.toFixed(2)} kg`;
             document.getElementById("sum-price").innerText = `$${Math.round(route.calculatedPrice)}`;
 
-            // [關鍵] 把所有步驟存到全域變數，讓按鈕的 onclick 可以讀取
             currentRouteSteps = route.legs[0].steps;
-
             currentRouteSteps.forEach((step, index) => {
                 let icon = "🚶";
                 let instruction = step.instructions;
@@ -290,7 +276,6 @@ $json_rates = json_encode($rates);
                 } else if (step.travel_mode === 'DRIVING') icon = "🚗";
                 else if (step.travel_mode === 'TWO_WHEELER') icon = "🛵";
 
-                // [新增] 在 HTML 裡加入一個按鈕，onclick 呼叫 focusOnStep(index)
                 panel.innerHTML += `
                     <div class="step-item">
                         <div class="step-info">
@@ -306,27 +291,14 @@ $json_rates = json_encode($rates);
             });
         }
 
-        // --- [新增] 按下「查看」按鈕後執行的功能 ---
         function focusOnStep(index) {
             const step = currentRouteSteps[index];
-            const startLocation = step.start_location;
-
-            // 1. 移動地圖並放大
-            map.panTo(startLocation);
+            map.panTo(step.start_location);
             map.setZoom(16);
-
-            // 2. 顯示資訊視窗 (InfoWindow) 告訴使用者這裡是什麼
-            // 去除 instruction 裡的 HTML 標籤，讓視窗乾淨一點
-            let tempDiv = document.createElement("div");
-            tempDiv.innerHTML = step.instructions;
+            let tempDiv = document.createElement("div"); tempDiv.innerHTML = step.instructions;
             let cleanText = tempDiv.textContent || tempDiv.innerText || "";
-
-            stepInfoWindow.setContent(`
-                <div style="padding:5px; font-weight:bold;">
-                    ${cleanText}
-                </div>
-            `);
-            stepInfoWindow.setPosition(startLocation);
+            stepInfoWindow.setContent(`<div style="padding:5px; font-weight:bold;">${cleanText}</div>`);
+            stepInfoWindow.setPosition(step.start_location);
             stepInfoWindow.open(map);
         }
 
