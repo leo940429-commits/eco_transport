@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transport_data>
+    <!-- 
+        資料來源：專題碳排放係數表
+        co2_factor: kgCO2e/公里
+    -->
+    
+    <!-- 1. 公車 (圖片數值: 0.04) -->
+    <item type="BUS">
+        <name>公車</name>
+        <co2_factor>0.04</co2_factor>
+        <price_base>15</price_base>
+        <price_per_km>0</price_per_km>
+    </item>
+
+    <!-- 2. 捷運 (圖片數值: 0.04) -->
+    <item type="SUBWAY">
+        <name>捷運</name>
+        <co2_factor>0.04</co2_factor>
+        <price_base>20</price_base>
+        <price_per_km>5</price_per_km>
+    </item>
+
+    <!-- 3. 台鐵 (圖片數值: 0.06) -->
+    <!-- Google API 回傳的 TRAIN 通常指台鐵/火車 -->
+    <item type="TRAIN">
+        <name>台鐵</name>
+        <co2_factor>0.06</co2_factor>
+        <price_base>10</price_base>
+        <price_per_km>2</price_per_km>
+    </item>
+
+    <!-- 4. 高鐵 (圖片數值: 0.032) -->
+    <item type="HIGH_SPEED_TRAIN">
+        <name>高鐵</name>
+        <co2_factor>0.032</co2_factor>
+        <price_base>40</price_base>
+        <price_per_km>4</price_per_km>
+    </item>
+
+    <!-- 5. 自用小客車 (圖片數值: 0.115) -->
+    <item type="DRIVING">
+        <name>自用小客車</name>
+        <co2_factor>0.115</co2_factor>
+        <price_base>0</price_base>
+        <price_per_km>5</price_per_km> <!-- 油錢預估 -->
+    </item>
+
+    <!-- 5. 機車 (估計值: 0.055) -->
+    <item type="TWO_WHEELER">
+        <name>機車</name>
+        <co2_factor>0.055</co2_factor> <!-- 暫估值 -->
+        <price_base>0</price_base>
+        <price_per_km>1.5</price_per_km>
+    </item>
+
+    <!-- 走路 (碳排 0) -->
+    <item type="WALKING">
+        <name>走路</name>
+        <co2_factor>0</co2_factor>
+        <price_base>0</price_base>
+        <price_per_km>0</price_per_km>
+    </item>
+
+    <!-- 自行車 (碳排 0) -->
+    <item type="BICYCLING">
+        <name>自行車</name>
+        <co2_factor>0</co2_factor>
+        <price_base>5</price_base>
+        <price_per_km>0</price_per_km>
+    </item>
+</transport_data>
