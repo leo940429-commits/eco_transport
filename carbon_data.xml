@@ -1,72 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transport_data>
     <!-- 
-        資料來源：專題碳排放係數表
+        資料來源：專題碳排放係數表與 TDX 整合參數
         co2_factor: kgCO2e/公里
+        transfer_discount_eligible: 是否支援電子票證轉乘優惠 (true/false)
     -->
-    
-    <!-- 1. 公車 (圖片數值: 0.04) -->
+
+    <!-- 1. 公車 -->
     <item type="BUS">
         <name>公車</name>
         <co2_factor>0.04</co2_factor>
         <price_base>15</price_base>
         <price_per_km>0</price_per_km>
+        <transfer_discount_eligible>true</transfer_discount_eligible>
+        <note>支援 TDX 公車即時動態與電子票證轉乘優惠</note>
     </item>
 
-    <!-- 2. 捷運 (圖片數值: 0.04) -->
+    <!-- 2. 捷運 -->
     <item type="SUBWAY">
         <name>捷運</name>
         <co2_factor>0.04</co2_factor>
         <price_base>20</price_base>
         <price_per_km>5</price_per_km>
+        <transfer_discount_eligible>true</transfer_discount_eligible>
+        <note>支援電子票證轉乘優惠</note>
     </item>
 
-    <!-- 3. 台鐵 (圖片數值: 0.06) -->
-    <!-- Google API 回傳的 TRAIN 通常指台鐵/火車 -->
+    <!-- 3. 台鐵 -->
     <item type="TRAIN">
         <name>台鐵</name>
         <co2_factor>0.06</co2_factor>
         <price_base>10</price_base>
         <price_per_km>2</price_per_km>
+        <transfer_discount_eligible>false</transfer_discount_eligible>
+        <note>支援 TDX 臺鐵時刻表與早鳥優惠試算</note>
     </item>
 
-    <!-- 4. 高鐵 (圖片數值: 0.032) -->
+    <!-- 4. 高鐵 -->
     <item type="HIGH_SPEED_TRAIN">
         <name>高鐵</name>
         <co2_factor>0.032</co2_factor>
         <price_base>40</price_base>
         <price_per_km>4</price_per_km>
+        <transfer_discount_eligible>false</transfer_discount_eligible>
+        <note>支援高鐵早鳥優惠與車次查詢</note>
     </item>
 
-    <!-- 5. 自用小客車 (圖片數值: 0.115) -->
+    <!-- 5. 自用小客車 -->
     <item type="DRIVING">
         <name>自用小客車</name>
         <co2_factor>0.115</co2_factor>
         <price_base>0</price_base>
-        <price_per_km>5</price_per_km> <!-- 油錢預估 -->
+        <price_per_km>5</price_per_km>
+        <transfer_discount_eligible>false</transfer_discount_eligible>
+        <note>油錢預估</note>
     </item>
-
-    <!-- 5. 機車 (估計值: 0.055) -->
+<!-- 6. 機車 -->
     <item type="TWO_WHEELER">
         <name>機車</name>
-        <co2_factor>0.055</co2_factor> <!-- 暫估值 -->
+        <co2_factor>0.055</co2_factor>
         <price_base>0</price_base>
         <price_per_km>1.5</price_per_km>
+        <transfer_discount_eligible>false</transfer_discount_eligible>
+        <note>機車碳排與油資估算</note>
     </item>
 
-    <!-- 走路 (碳排 0) -->
+    <!-- 7. 走路 -->
     <item type="WALKING">
         <name>走路</name>
         <co2_factor>0</co2_factor>
         <price_base>0</price_base>
         <price_per_km>0</price_per_km>
+        <transfer_discount_eligible>false</transfer_discount_eligible>
+        <note>零碳排綠色運輸</note>
     </item>
 
-    <!-- 自行車 (碳排 0) -->
+    <!-- 8. 自行車 -->
     <item type="BICYCLING">
         <name>自行車</name>
         <co2_factor>0</co2_factor>
         <price_base>5</price_base>
         <price_per_km>0</price_per_km>
+        <transfer_discount_eligible>false</transfer_discount_eligible>
+        <note>YouBike / 自行車</note>
     </item>
 </transport_data>
